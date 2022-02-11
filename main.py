@@ -7,6 +7,7 @@ import pandas
 import os
 import xml.etree.ElementTree as ET
 from pathlib import Path
+import csv
 
 class_id_to_new_class_id = {'speedlimit': 0, 'stop': 1, 'crosswalk': 1, 'trafficlight': 1}
 
@@ -128,6 +129,7 @@ def evaluate(data):
     y_pred = [0,0,0,0]
     y_real = [0,0,0,0]
     for sample in data:
+        #print(sample['image'])
         y_pred.append(sample['label_pred'])
         #print(sample['label_pred'])
         y_real.append(sample['label'])
@@ -137,6 +139,17 @@ def evaluate(data):
     precision=tp/(tp+fp)*100
     recall=tp/(tp+fn)*100
     return accuracy,precision,recall
+def display_data(data,path,filename):
+    f=open(filename)
+    csv_f=csv.reader(f)
+    names=[]
+    i=1
+    for row in csv_f:
+        names.append(row[1])
+    for sample in data:
+        print(names[i],"wykryta klasa: ",sample['label_pred'], "prawdziwa klasa: ",sample['label'])
+        i=i+1
+    f.close()
 def print_evaluate_data(data):
     print("accuracy = ", format(data[0], '.4g'), "%")
     print("precision = ", format(data[1], '.4g'), "%")
@@ -164,6 +177,7 @@ def test_main():
     data_test = predict(rf, data_test)
     evaluate_data=evaluate(data_test)
     print_evaluate_data(evaluate_data)
+    display_data(data_test,'./','Test.csv')
 
 if __name__ == '__main__':
     test_main()
