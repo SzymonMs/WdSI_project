@@ -48,6 +48,7 @@ W kodzie znaleźć można również ```test_main()```, który zawiera wywołania
 Funkcją główną, która wykonuje cały proces klasyfikacji, jest ```main()```. Pierwsze w kolejności jest wczytanie danych treningowych oraz zmiana ich formatu na plik .csv. Dalej w kolejności następuje nauka, wyodrębnianie cech oraz trening z wykorzystaniem odpowiednich funkcji. Następnie wyświetlany jest komunikat, który nakazuje wpisanie jednego z dwóch poleceń:
 
 ```detect```- klasyfikacja zostanie wykonana na wszystkich plikach ze zbioru treningowego.
+
 ```classify```- klasyfikacja zostanie wykonana na takiej ilości plikach, jaka zostanie podana przez użytkownika. Jeżeli liczba podana, byłaby większa niż liczba plików w katalogu trenigowym, program zakończy się komunikatem o za dużej liczbie podnej.
 
 # Podsumowanie
