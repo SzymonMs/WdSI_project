@@ -43,6 +43,7 @@ def data_format(path,im_path):
             data_list.append(data)
         else:
             continue
+    #data_list.sort()
     DataFrame=pandas.DataFrame(data_list)
     return DataFrame
 
@@ -54,7 +55,7 @@ def load_data(path,filename):
         id=class_id_to_new_class_id[files['class']]
         img_name=files['filename']
         image=cv2.imread(os.path.join(path,img_name))
-        data.append({'image':image,'label':id})
+        data.append({'image':image,'label':id,'filename':img_name})
         if id not in class_to_num:
             class_to_num[id]=0
         class_to_num[id]+=1
@@ -105,37 +106,38 @@ def train(data):
     clf.fit(desc_matrix[1:], label_vector)
     return clf
 
-def predict(rf, data):
+def predict(rf, data,n):
+    i=0
     for files in data:
-        if files['desc'] is None:
-            continue
-        else:
-            files.update({'label_pred': rf.predict(files['desc'])[0]})
+        if i<n:
+            if files['desc'] is None:
+                continue
+            else:
+                files.update({'label_pred': rf.predict(files['desc'])[0]})
+        i=i+1
     return data
 
-def evaluate(data):
+def evaluate(data,n):
+    i=0
     y_pred = [0,0,0,0]
     y_real = [0,0,0,0]
     for files in data:
-        y_pred.append(files['label_pred'])
-        y_real.append(files['label'])
+        if i<n:
+            y_pred.append(files['label_pred'])
+            y_real.append(files['label'])
+        i=i+1
     tn, fp, fn, tp = confusion_matrix(y_pred, y_real, labels=[0, 1]).ravel()
     accuracy = (tp + tn) / (tp + tn + fp + fn)*100
     precision=tp/(tp+fp)*100
     recall=tp/(tp+fn)*100
     return accuracy,precision,recall
 
-def display_data(data,path,filename):
-    f=open(filename)
-    csv_f=csv.reader(f)
-    names=[]
-    i=1
-    for row in csv_f:
-        names.append(row[1])
+def display_data(data,n):
+    i=0
     for files in data:
-        print(names[i],"wykryta klasa: ",files['label_pred'], "prawdziwa klasa: ",files['label'])
+        if i<n:
+            print(files['filename'],"wykryta klasa: ", files['label_pred'], "prawdziwa klasa: ", files['label'])
         i=i+1
-    f.close()
 
 def print_evaluate_data(data):
     print("accuracy = ", format(data[0], '.4g'), "%")
@@ -149,7 +151,11 @@ def test_main():
     DataFrame_test = data_format(annotations_path_test, images_path_test)
     DataFrame_test.to_csv("Test.csv")
     data_train = load_data('./', 'Train.csv')
+    train_count = len(data_train)
+    print(train_count)
     data_test = load_data('./', 'Test.csv')
+    test_count = len(data_test)
+    print(test_count)
     print('learning BoVW')
     if os.path.isfile('voc.npy'):
         print('BoVW is already learned')
@@ -162,10 +168,10 @@ def test_main():
     print('extracting test features')
     data_test = extract_features(data_test)
     print('testing')
-    data_test = predict(rf, data_test)
-    evaluate_data=evaluate(data_test)
+    data_test = predict(rf, data_test,10)
+    evaluate_data=evaluate(data_test,10)
     print_evaluate_data(evaluate_data)
-    display_data(data_test,'./','Test.csv')
+    display_data(data_test,10)
 
 def main():
     print("Loading data...")
@@ -180,18 +186,36 @@ def main():
     learn(data_train)
     data_train = extract_features(data_train)
     rf = train(data_train)
-    print("Podaj polecenie 'detect' ")
+    print("Podaj polecenie 'detect' albo 'classify': ")
     command=input()
     if command=="detect":
         print("Loading data...")
         DataFrame_test = data_format(annotations_path_test, images_path_test)
         DataFrame_test.to_csv("Test.csv")
         data_test = load_data('./', 'Test.csv')
+        test_count = len(data_test)
         print("Work in progress... ")
         data_test = extract_features(data_test)
-        data_test = predict(rf, data_test)
+        data_test = predict(rf, data_test,test_count)
         print("List of files: ")
-        display_data(data_test, './', 'Test.csv')
+        display_data(data_test, test_count)
+    elif command=="classify":
+        print("Loading data...")
+        DataFrame_test = data_format(annotations_path_test, images_path_test)
+        DataFrame_test.to_csv("Test.csv")
+        data_test = load_data('./', 'Test.csv')
+        test_count = int(len(data_test))
+        print("Podaj ile zdjec zaklasyfikowac wiedzac ze jest ich w sumie ",test_count,": ")
+        n = input()
+        n=int(n)
+        if n<=test_count:
+            print("Work in progress... ")
+            data_test = extract_features(data_test)
+            data_test = predict(rf, data_test,n)
+            print("List of files: ")
+            display_data(data_test,n)
+        else:
+            print("Podales za duza liczbe")
 
 if __name__ == '__main__':
     main()
