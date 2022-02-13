@@ -1,5 +1,5 @@
 # WdSI_project
 
-Projekt na zaliczenie przedmiotu Wprowadzenie do Sztucznej inteligencji
+Projekt na zaliczenie przedmiotu Wprowadzenie do Sztucznej inteligencji. Zadaniem programu jest klasyfikacja znaków drogowych na dwie grupy: speedlimit oznaczone jako 0 oraz other oznaczone jako 1. W projekcie nie wykonano zadania detekcji znaku, program klasyfikuje całe zdjęcia. Przyjęto następujące założenie: jeżeli na zdjęciu znajduje się kilka znaków drogowych i jest w tej grupie znak speedlimit to całe zdjęcie, zostaje oznaczone jako speedlimit (klasa 0), jeżeli nie ma na zdjęciu znaku speedlimit to obraz jest oznaczany jako ogher (klasa 1). Założenie to ma uzasadnienie w koncepcji projektu, polegającej na klasyfikacji zdjęć na podstawie wystąpienia znaku ograniczenia prędkości lub nie. Program nie wykonuje detekcji położenie znaku, więc niepotrzebne jest dzielenie obrazu na okna z różnymi znakami. W projekcie przyjęto również kryterium, aby znak zajmował 1/10 wysokości i szerokości zdjęcia, co sprowadza się do sprawdzenia, czy pole znaku zajmuje 1/100 pola całego zdjęcia.
 
 # Dokumentacja kodu
