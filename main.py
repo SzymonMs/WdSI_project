@@ -136,7 +136,8 @@ def display_data(data,n):
     i=0
     for files in data:
         if i<n:
-            print(files['filename'],"wykryta klasa: ", files['label_pred'], "prawdziwa klasa: ", files['label'])
+            #print(files['filename'],"wykryta klasa: ", files['label_pred'], "prawdziwa klasa: ", files['label'])
+            print(files['label_pred'])
         i=i+1
 
 def print_evaluate_data(data):
@@ -174,45 +175,57 @@ def test_main():
     display_data(data_test,10)
 
 def main():
-    print("Loading data...")
-    DataFrame_train = data_format(annotations_path_train, images_path_train)
-    DataFrame_train.to_csv("Train.csv")
-    data_train = load_data('./', 'Train.csv')
-    print("Learning...")
-    #if os.path.isfile('voc.npy'):
-    #    print('BoVW is already learned')
-    #else:
-    #    learn(data_train)
-    learn(data_train)
-    data_train = extract_features(data_train)
-    rf = train(data_train)
-    print("Podaj polecenie 'detect' albo 'classify': ")
+    #print("Podaj polecenie 'detect' albo 'classify': ")
     command=input()
     if command=="detect":
-        print("Loading data...")
+        # print("Loading data...")
+        DataFrame_train = data_format(annotations_path_train, images_path_train)
+        DataFrame_train.to_csv("Train.csv")
+        data_train = load_data('./', 'Train.csv')
+        # print("Learning...")
+        # if os.path.isfile('voc.npy'):
+        #    #print('BoVW is already learned')
+        # else:
+        #    learn(data_train)
+        learn(data_train)
+        data_train = extract_features(data_train)
+        rf = train(data_train)
+        #print("Loading data...")
         DataFrame_test = data_format(annotations_path_test, images_path_test)
         DataFrame_test.to_csv("Test.csv")
         data_test = load_data('./', 'Test.csv')
         test_count = len(data_test)
-        print("Work in progress... ")
+        #print("Work in progress... ")
         data_test = extract_features(data_test)
         data_test = predict(rf, data_test,test_count)
-        print("List of files: ")
+        #print("List of files: ")
         display_data(data_test, test_count)
     elif command=="classify":
-        print("Loading data...")
+        n = input()
+        n = int(n)
+        # print("Loading data...")
+        DataFrame_train = data_format(annotations_path_train, images_path_train)
+        DataFrame_train.to_csv("Train.csv")
+        data_train = load_data('./', 'Train.csv')
+        # print("Learning...")
+        # if os.path.isfile('voc.npy'):
+        #    #print('BoVW is already learned')
+        # else:
+        #    learn(data_train)
+        learn(data_train)
+        data_train = extract_features(data_train)
+        rf = train(data_train)
+        #print("Loading data...")
         DataFrame_test = data_format(annotations_path_test, images_path_test)
         DataFrame_test.to_csv("Test.csv")
         data_test = load_data('./', 'Test.csv')
         test_count = int(len(data_test))
-        print("Podaj ile zdjec zaklasyfikowac wiedzac ze jest ich w sumie ",test_count,": ")
-        n = input()
-        n=int(n)
+        #print("Podaj ile zdjec zaklasyfikowac wiedzac ze jest ich w sumie ",test_count,": ")
         if n<=test_count:
-            print("Work in progress... ")
+            #print("Work in progress... ")
             data_test = extract_features(data_test)
             data_test = predict(rf, data_test,n)
-            print("List of files: ")
+            #print("List of files: ")
             display_data(data_test,n)
         else:
             print("Podales za duza liczbe")
