@@ -8,6 +8,32 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 import csv
 
+# TODO Jakość kodu i raport (3/4)
+
+
+# TODO Skuteczność klasyfikacji 0.0 (0/4)
+# TODO [0.00, 0.50) - 0.0
+# TODO [0.50, 0.55) - 0.5
+# TODO [0.55, 0.60) - 1.0
+# TODO [0.60, 0.65) - 1.5
+# TODO [0.65, 0.70) - 2.0
+# TODO [0.70, 0.75) - 2.5
+# TODO [0.75, 0.80) - 3.0
+# TODO [0.80, 0.85) - 3.5
+# TODO [0.85, 1.00) - 4.0
+
+# stderr:
+# Traceback (most recent call last):
+#   File "main.py", line 234, in <module>
+#     main()
+#   File "main.py", line 215, in main
+#     learn(data_train)
+#   File "main.py", line 75, in learn
+#     voc=bow.cluster()
+# cv2.error: OpenCV(4.5.4) /tmp/pip-req-build-th1mncc2/opencv/modules/features2d/src/bagofwords.cpp:94: error: (-215:Assertion failed) !descriptors.empty() in function 'cluster'
+
+# TODO Skuteczność detekcji (0/2)
+
 class_id_to_new_class_id = {'speedlimit': 0, 'stop': 1, 'crosswalk': 1, 'trafficlight': 1}
 
 images_path_train = Path('./train/images')
@@ -34,6 +60,7 @@ def data_format(path,im_path):
             data['ymin'] = int(obj.find("./bndbox/ymin").text)
             data['ymax'] = int(obj.find("./bndbox/ymax").text)
             class_list.append(data['class'])
+        # TODO Zadanie klasyfikacji polegalo na klasyfikacji fragmentow zdjec, a nie calych zdjec.
         if class_list.count("speedlimit")>0:
             data['class']="speedlimit"
         else:
@@ -196,6 +223,7 @@ def main():
         data_test = load_data('./', 'Test.csv')
         test_count = len(data_test)
         #print("Work in progress... ")
+        # TODO To nie jest detekcja.
         data_test = extract_features(data_test)
         data_test = predict(rf, data_test,test_count)
         #print("List of files: ")
@@ -204,6 +232,7 @@ def main():
         n = input()
         n = int(n)
         # print("Loading data...")
+        # TODO Niepotrzebne przepisywanie danych do nowego pliku.
         DataFrame_train = data_format(annotations_path_train, images_path_train)
         DataFrame_train.to_csv("Train.csv")
         data_train = load_data('./', 'Train.csv')
@@ -216,6 +245,7 @@ def main():
         data_train = extract_features(data_train)
         rf = train(data_train)
         #print("Loading data...")
+        # TODO Informacje o zdjeciach do klasyfikacji sa podawane na standardowe wejscie.
         DataFrame_test = data_format(annotations_path_test, images_path_test)
         DataFrame_test.to_csv("Test.csv")
         data_test = load_data('./', 'Test.csv')
