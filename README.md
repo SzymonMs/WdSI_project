@@ -1,7 +1,6 @@
 # WdSI_project
 
-Projekt na zaliczenie przedmiotu Wprowadzenie do Sztucznej inteligencji. Zadaniem programu jest klasyfikacja znaków drogowych na dwie grupy: speedlimit oznaczone jako 0 oraz other oznaczone jako 1. W projekcie nie wykonano zadania detekcji znaku, program klasyfikuje całe zdjęcia. Przyjęto następujące założenie: jeżeli na zdjęciu znajduje się kilka znaków drogowych i jest w tej grupie znak speedlimit to całe zdjęcie, zostaje oznaczone jako speedlimit (klasa 0), jeżeli nie ma na zdjęciu znaku speedlimit to obraz jest oznaczany jako ogher (klasa 1). Założenie to ma uzasadnienie w koncepcji projektu, polegającej na klasyfikacji zdjęć na podstawie wystąpienia znaku ograniczenia prędkości lub nie. Program nie wykonuje detekcji położenie znaku, więc niepotrzebne jest dzielenie obrazu na okna z różnymi znakami. W projekcie przyjęto również kryterium, aby znak zajmował 1/10 wysokości i szerokości zdjęcia, co sprowadza się do sprawdzenia, czy pole znaku zajmuje 1/100 pola całego zdjęcia.
-
+Projekt na zaliczenie przedmiotu Wprowadzenie do Sztucznej inteligencji. Zadaniem programu jest klasyfikacja znaków drogowych na dwie grupy: speedlimit oznaczone jako 0 oraz other oznaczone jako 1. W projekcie nie wykonano zadania detekcji znaku. 
 # Dokumentacja kodu
 
 Wszystkie potrzebne biblioteki/ pakiety oprogramowania zostały zaimportowane na górze kodu.
@@ -45,11 +44,13 @@ Funkcje ```display_data(data,n)``` oraz ```print_evaluate_data(data)``` służa 
 
 W kodzie znaleźć można również ```test_main()```, który zawiera wywołania poszczególnych funkcji i cały proces klasyfikacji. Jest to funkcja testowa, która została w kodzie w celu testowania rozwiązań. Nie jest ona używana.
 
-Funkcją główną, która wykonuje cały proces klasyfikacji, jest ```main()```. Pierwsze w kolejności jest wczytanie danych treningowych oraz zmiana ich formatu na plik .csv. Dalej w kolejności następuje nauka, wyodrębnianie cech oraz trening z wykorzystaniem odpowiednich funkcji. Następnie wyświetlany jest komunikat, który nakazuje wpisanie jednego z dwóch poleceń:
+# ZMIANY
 
-```detect```- klasyfikacja zostanie wykonana na wszystkich plikach ze zbioru treningowego.
+Funkcja ```loadData(boolean)``` ma za zadanie wczytanie danych, w zależności od wartości zmiennej logicznej wczytuje on odpowiednie dane. Jeżeli jest ```True``` to wczytuje on dane treningowe, w przeciwnym wypadku testowe. Funkcja zwraca listę słowników z danymi.
 
-```classify```- klasyfikacja zostanie wykonana na takiej ilości plikach, jaka zostanie podana przez użytkownika. Jeżeli liczba podana, byłaby większa niż liczba plików w katalogu trenigowym, program zakończy się komunikatem o za dużej liczbie podnej.
+Funkcja  ```Classify(data)``` służy do wyświetlenia w odpowiednim formacie wyników klasyfikacji.
+
+Funkcja ```main()``` zaczyna się od przyjęcia polecenia sterującego. Następne jest przygotowanie danych. W dalszej kolejności następuje przyjęcie przez program liczby klasyfikowanych plików, ich nazwy, ilość wycinków z tych plików oraz ich współrzędne. Program dokonuje uczenia, a następnie klasyfikacji i testowania.
 
 # Podsumowanie
 
