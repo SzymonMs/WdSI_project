@@ -14,7 +14,6 @@ images_path_train = Path('./train/images')
 annotations_path_train = Path('./train/annotations')
 images_path_test = Path('./test/images')
 annotations_path_test = Path('./test/annotations')
-
 def data_format(path,im_path):
     data_list=[]
     annotations=[os.path.join(directory_path, f) for directory_path, directory_name,
@@ -63,6 +62,38 @@ def load_data(path,filename):
     #print(class_to_num)
     return data
 
+def loadData(boolean):
+    data = []
+    if boolean == True:
+        for file in os.listdir(images_path_train):
+            fileImage  = os.path.join(images_path_train,file)
+            name = os.path.basename(file)
+            fileAnnotation = os.path.join(annotations_path_train,file.split(sep='.')[0] + '.xml')
+            root = ET.parse(fileAnnotation).getroot()
+            image = cv2.imread(fileImage, cv2.IMREAD_COLOR)
+            name = root.find('filename').text
+            iter = 4
+            while iter is not len(root):
+                xmin = int(root[iter][5][0].text)
+                ymin = int(root[iter][5][1].text)
+                xmax = int(root[iter][5][2].text)
+                ymax = int(root[iter][5][3].text)
+                idText = root[iter][0].text
+                if idText == 'speedlimit':
+                    id= 0
+                else:
+                    id = 1
+                imgSegment = image[ymin:ymax, xmin:xmax]
+                data.append({'image': imgSegment.copy(), 'name': name, 'label': id})
+                iter=iter+1
+    else:
+        for file in os.listdir(images_path_test):
+            fileImage = os.path.join(images_path_test, file)
+            name = os.path.basename(file)
+            image = cv2.imread(fileImage, cv2.IMREAD_COLOR)
+            data.append({'image': image, 'name': name})
+    return data
+
 def learn(data):
     size=128
     bow=cv2.BOWKMeansTrainer(size)
@@ -74,6 +105,7 @@ def learn(data):
             bow.add(desc)
     voc=bow.cluster()
     np.save('voc.npy',voc)
+    return
 
 def extract_features(data):
     size=128
@@ -106,26 +138,30 @@ def train(data):
     clf.fit(desc_matrix[1:], label_vector)
     return clf
 
-def predict(rf, data,n):
-    i=0
+def predict(rf, data):
     for files in data:
-        if i<n:
+
             if files['desc'] is None:
                 continue
             else:
                 files.update({'label_pred': rf.predict(files['desc'])[0]})
-        i=i+1
-    return data
 
-def evaluate(data,n):
-    i=0
+    return data
+def Classify(data):
+    for img in data:
+        if img['label_pred'] == 0:
+            print('speedlimit')
+        else:
+            print('other')
+    return
+def evaluate(data):
     y_pred = [0,0,0,0]
     y_real = [0,0,0,0]
     for files in data:
-        if i<n:
+
             y_pred.append(files['label_pred'])
             y_real.append(files['label'])
-        i=i+1
+
     tn, fp, fn, tp = confusion_matrix(y_pred, y_real, labels=[0, 1]).ravel()
     accuracy = (tp + tn) / (tp + tn + fp + fn)*100
     precision=tp/(tp+fp)*100
@@ -133,19 +169,17 @@ def evaluate(data,n):
     return accuracy,precision,recall
 
 def display_data(data,n):
-    i=0
     for files in data:
-        if i<n:
+
             #print(files['filename'],"wykryta klasa: ", files['label_pred'], "prawdziwa klasa: ", files['label'])
             print(files['label_pred'])
-        i=i+1
+
 
 def print_evaluate_data(data):
     print("accuracy = ", format(data[0], '.4g'), "%")
     print("precision = ", format(data[1], '.4g'), "%")
     print("recall = ", format(data[2], '.4g'), "%")
     return
-
 def test_main():
     DataFrame_train=data_format(annotations_path_train,images_path_train)
     DataFrame_train.to_csv("Train.csv")
@@ -173,62 +207,31 @@ def test_main():
     evaluate_data=evaluate(data_test,10)
     print_evaluate_data(evaluate_data)
     display_data(data_test,10)
-
 def main():
-    #print("Podaj polecenie 'detect' albo 'classify': ")
     command=input()
-    if command=="detect":
-        # print("Loading data...")
-        DataFrame_train = data_format(annotations_path_train, images_path_train)
-        DataFrame_train.to_csv("Train.csv")
-        data_train = load_data('./', 'Train.csv')
-        # print("Learning...")
-        # if os.path.isfile('voc.npy'):
-        #    #print('BoVW is already learned')
-        # else:
-        #    learn(data_train)
-        learn(data_train)
-        data_train = extract_features(data_train)
-        rf = train(data_train)
-        #print("Loading data...")
-        DataFrame_test = data_format(annotations_path_test, images_path_test)
-        DataFrame_test.to_csv("Test.csv")
-        data_test = load_data('./', 'Test.csv')
-        test_count = len(data_test)
-        #print("Work in progress... ")
-        data_test = extract_features(data_test)
-        data_test = predict(rf, data_test,test_count)
-        #print("List of files: ")
-        display_data(data_test, test_count)
-    elif command=="classify":
+    DataFrame_train = loadData(True)
+    DataFrame_test = loadData(False)
+    if command=="classify":
         n = input()
         n = int(n)
-        # print("Loading data...")
-        DataFrame_train = data_format(annotations_path_train, images_path_train)
-        DataFrame_train.to_csv("Train.csv")
-        data_train = load_data('./', 'Train.csv')
-        # print("Learning...")
-        # if os.path.isfile('voc.npy'):
-        #    #print('BoVW is already learned')
-        # else:
-        #    learn(data_train)
-        learn(data_train)
-        data_train = extract_features(data_train)
-        rf = train(data_train)
-        #print("Loading data...")
-        DataFrame_test = data_format(annotations_path_test, images_path_test)
-        DataFrame_test.to_csv("Test.csv")
-        data_test = load_data('./', 'Test.csv')
-        test_count = int(len(data_test))
-        #print("Podaj ile zdjec zaklasyfikowac wiedzac ze jest ich w sumie ",test_count,": ")
-        if n<=test_count:
-            #print("Work in progress... ")
-            data_test = extract_features(data_test)
-            data_test = predict(rf, data_test,n)
-            #print("List of files: ")
-            display_data(data_test,n)
-        else:
-            print("Podales za duza liczbe")
-
+        data=[]
+        for x in range(n):
+            file_name=input()
+            number_of_image=input()
+            number_of_image=int(number_of_image)
+            parts = []
+            for j in range(number_of_image):
+                parts.append(input(''))
+                parts[j] = [int(x) for x in parts[j].split()]
+            for image in DataFrame_test:
+                if image['name']== file_name:
+                    for j in range(number_of_image):
+                        data.append({'image': image['image'][parts[j][2]:parts[j][3], parts[j][0]:parts[j][1]].copy(), 'name': file_name})
+        learn(DataFrame_train)
+        DataFrame_train = extract_features(DataFrame_train)
+        rf = train(DataFrame_train)
+        data = extract_features(data)
+        data = predict(rf, data)
+        Classify(data)
 if __name__ == '__main__':
     main()
