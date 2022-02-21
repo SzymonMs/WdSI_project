@@ -8,6 +8,34 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 import csv
 
+# TODO Jakość kodu i raport (3/4)
+
+
+# TODO Skuteczność klasyfikacji 0.0 (0/4)
+# TODO [0.00, 0.50) - 0.0
+# TODO [0.50, 0.55) - 0.5
+# TODO [0.55, 0.60) - 1.0
+# TODO [0.60, 0.65) - 1.5
+# TODO [0.65, 0.70) - 2.0
+# TODO [0.70, 0.75) - 2.5
+# TODO [0.75, 0.80) - 3.0
+# TODO [0.80, 0.85) - 3.5
+# TODO [0.85, 1.00) - 4.0
+
+# stderr:
+# Traceback (most recent call last):
+#   File "main.py", line 237, in <module>
+#     main()
+#   File "main.py", line 212, in main
+#     DataFrame_train = loadData(True)
+#   File "main.py", line 68, in loadData
+#     for file in os.listdir(images_path_train):
+# FileNotFoundError: [Errno 2] No such file or directory: 'train/images'
+
+# TODO Skuteczność detekcji (0/2)
+
+# TODO Poprawki po terminie. (-1)
+
 class_id_to_new_class_id = {'speedlimit': 0, 'stop': 1, 'crosswalk': 1, 'trafficlight': 1}
 
 images_path_train = Path('./train/images')
