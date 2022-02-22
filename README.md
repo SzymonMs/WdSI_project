@@ -21,10 +21,10 @@ class_id_to_new_class_id = {'speedlimit': 0, 'stop': 1, 'crosswalk': 1, 'traffic
 ```
 Deklaracja ścieżek do kolejno plików testowych i treningowych następuje w sposób następujący:
 ```python
-images_path_train = Path('./train/images')
-annotations_path_train = Path('./train/annotations')
-images_path_test = Path('./test/images')
-annotations_path_test = Path('./test/annotations')
+images_path_train = Path('../train/images')
+annotations_path_train = Path('../train/annotations')
+images_path_test = Path('../test/images')
+annotations_path_test = Path('../test/annotations')
 ```
 Funkcja ```data_format(path,im_path)``` ma za zadanie odczyt danych z plików .xml, dotyczących zdjęć. Jej argument to ścieżka do katalogu z adnotacjami oraz ścieżka do katalogu ze zdjęciami. Funkcja ta sprawdza, czy na zdjęciu występuje znak speedlimit, czy nie. Jeżeli występuje przynajmniej jeden, to całe zdjęcie oznaczane jest jako speedlimit, jeżeli nie to oznaczane jest klasą pierwszego obiektu, co nie ma znaczenia, gdyż w dalszym etapie, wszystkie inne zostaną oznaczone jako klasa other. Funkcja sprawdza również, czy obszar zajmowany przez znak to 1/100 pola całego zdjęcia. Funkcja zwraca dane w formacie pandas.DataFrame.
 
@@ -44,8 +44,6 @@ Funkcje ```display_data(data,n)``` oraz ```print_evaluate_data(data)``` służa 
 
 W kodzie znaleźć można również ```test_main()```, który zawiera wywołania poszczególnych funkcji i cały proces klasyfikacji. Jest to funkcja testowa, która została w kodzie w celu testowania rozwiązań. Nie jest ona używana.
 
-# ZMIANY
-
 Funkcja ```loadData(boolean)``` ma za zadanie wczytanie danych, w zależności od wartości zmiennej logicznej wczytuje on odpowiednie dane. Jeżeli jest ```True``` to wczytuje on dane treningowe, w przeciwnym wypadku testowe. Funkcja zwraca listę słowników z danymi.
 
 Funkcja  ```Classify(data)``` służy do wyświetlenia w odpowiednim formacie wyników klasyfikacji.
@@ -54,8 +52,7 @@ Funkcja ```main()``` zaczyna się od przyjęcia polecenia sterującego. Następn
 
 # Podsumowanie
 
-W ramach projektu zrealizowano jedynie zadanie klasyfikacji zdjęć, nie wykonano detekcji znaków. Nie sprawdzano więc wycinków obrazów, podanych przez użytkownika, pod kątem występowania tam obrazów. Dane wyświetlane są użytkownikowi w takiej kolejności, w jakiej zostały zapisane, nie udało się ich posortować względem nazwy. Nie wykonywana jest również klasyfikacja kilku znaków z tego samego zdjęcia, gdyż przyjęto kryterium "ważności znaków speedlimit" opisywane w pierwszym akapicie. 
-
+W ramach projektu zrealizowano jedynie zadanie klasyfikacji zdjęć, nie wykonano detekcji znaków.
 
 
 
