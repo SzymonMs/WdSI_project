@@ -8,6 +8,23 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 import csv
 
+# TODO Jakość kodu i raport (4/4)
+
+
+# TODO Skuteczność klasyfikacji 0.906 (4/4)
+# TODO [0.00, 0.50) - 0.0
+# TODO [0.50, 0.55) - 0.5
+# TODO [0.55, 0.60) - 1.0
+# TODO [0.60, 0.65) - 1.5
+# TODO [0.65, 0.70) - 2.0
+# TODO [0.70, 0.75) - 2.5
+# TODO [0.75, 0.80) - 3.0
+# TODO [0.80, 0.85) - 3.5
+# TODO [0.85, 1.00) - 4.0
+
+
+# TODO Skuteczność detekcji (/2)
+
 class_id_to_new_class_id = {'speedlimit': 0, 'stop': 1, 'crosswalk': 1, 'trafficlight': 1}
 
 images_path_train = Path('../train/images')
@@ -119,6 +136,7 @@ def extract_features(data):
         k = sift.detect(files['image'], None)
         imgDes = bow.compute(files['image'], k)
         if imgDes is None:
+            # TODO Lepiej w ogole pominac takie przypadki.
             files['desc'] = np.zeros((1, size))
         else:
             files['desc'] = imgDes
